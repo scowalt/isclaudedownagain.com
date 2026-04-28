@@ -60,14 +60,14 @@
       <!-- Stats -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
         <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-orange/30 transition-colors">
-          <p class="text-sm font-mono text-claude-muted mb-2">current downtime</p>
-          <p class="text-4xl font-mono font-bold text-claude-orange" id="downtime-counter">00:00:00</p>
-          <p class="text-sm text-claude-muted mt-2">and counting</p>
+          <p class="text-sm font-mono text-claude-muted mb-2">current outage</p>
+          <p class="text-4xl font-mono font-bold text-claude-orange" id="downtime-counter">--:--:--</p>
+          <p class="text-sm text-claude-muted mt-2" id="downtime-label">checking...</p>
         </div>
         <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-amber/30 transition-colors">
-          <p class="text-sm font-mono text-claude-muted mb-2">outages this month</p>
-          <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count"></p>
-          <p class="text-sm text-claude-muted mt-2">that they've admitted to</p>
+          <p class="text-sm font-mono text-claude-muted mb-2">incidents this month</p>
+          <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count">--</p>
+          <p class="text-sm text-claude-muted mt-2">from the status page</p>
         </div>
         <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-white/20 transition-colors">
           <p class="text-sm font-mono text-claude-muted mb-2">developers waiting</p>
@@ -147,21 +147,68 @@
         document.getElementById("suggestion")!.textContent = pickRandom(suggestions);
       }
 
-      // Init
       shuffle();
-      document.getElementById("outage-count")!.textContent = String(Math.floor(Math.random() * 40) + 10);
 
-      // Downtime counter
-      const fakeStart = Date.now() - Math.floor(Math.random() * 3600000);
-      function updateCounter() {
-        const elapsed = Math.floor((Date.now() - fakeStart) / 1000);
-        const h = String(Math.floor(elapsed / 3600)).padStart(2, "0");
-        const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, "0");
-        const s = String(elapsed % 60).padStart(2, "0");
-        document.getElementById("downtime-counter")!.textContent = `${h}:${m}:${s}`;
+      const API = "https://status.claude.com/api/v2";
+      let outageStart: number | null = null;
+      let counterId: ReturnType<typeof setInterval> | null = null;
+
+      function formatElapsed(ms: number) {
+        const s = Math.floor(ms / 1000);
+        const h = String(Math.floor(s / 3600)).padStart(2, "0");
+        const m = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+        const sec = String(s % 60).padStart(2, "0");
+        return `${h}:${m}:${sec}`;
       }
-      updateCounter();
-      setInterval(updateCounter, 1000);
+
+      function startCounter(since: number) {
+        outageStart = since;
+        function tick() {
+          document.getElementById("downtime-counter")!.textContent = formatElapsed(Date.now() - outageStart!);
+        }
+        tick();
+        counterId = setInterval(tick, 1000);
+      }
+
+      function showNoOutage() {
+        document.getElementById("downtime-counter")!.textContent = "00:00:00";
+        document.getElementById("downtime-label")!.textContent = "all clear (for now)";
+      }
+
+      async function fetchStatus() {
+        try {
+          const [unresolvedRes, incidentsRes] = await Promise.all([
+            fetch(`${API}/incidents/unresolved.json`),
+            fetch(`${API}/incidents.json`),
+          ]);
+
+          const unresolved = await unresolvedRes.json();
+          const allIncidents = await incidentsRes.json();
+
+          if (unresolved.incidents?.length > 0) {
+            const earliest = unresolved.incidents
+              .map((i: any) => new Date(i.started_at || i.created_at).getTime())
+              .sort((a: number, b: number) => a - b)[0];
+            startCounter(earliest);
+            document.getElementById("downtime-label")!.textContent = "and counting";
+          } else {
+            showNoOutage();
+          }
+
+          const now = new Date();
+          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+          const thisMonth = (allIncidents.incidents || []).filter(
+            (i: any) => new Date(i.created_at) >= monthStart
+          );
+          document.getElementById("outage-count")!.textContent = String(thisMonth.length);
+        } catch {
+          document.getElementById("downtime-counter")!.textContent = "??:??:??";
+          document.getElementById("downtime-label")!.textContent = "couldn't reach status page";
+          document.getElementById("outage-count")!.textContent = "?";
+        }
+      }
+
+      fetchStatus();
 
       // Buttons
       document.getElementById("shuffle-btn")!.addEventListener("click", shuffle);
