@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#e8622c" />
+    <meta name="theme-color" content="#e8622c" id="theme-color" />
     <title>Is Claude Down Again?</title>
     <meta name="description" content="You already know the answer." />
     <meta property="og:title" content="Is Claude Down Again?" />
@@ -18,14 +18,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
-  <body class="min-h-screen bg-claude-dark text-white font-body antialiased">
-    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_top,hsla(24,60%,12%,1),hsla(24,10%,4%,1))] -z-10"></div>
-    <div class="fixed inset-0 opacity-[0.03] -z-10" style="background-image: radial-gradient(circle, hsla(24,20%,50%,0.5) 1px, transparent 1px); background-size: 24px 24px;"></div>
+  <body class="min-h-screen text-white font-body antialiased transition-colors duration-700">
+    <div id="bg-gradient" class="fixed inset-0 -z-10 transition-all duration-700 bg-[radial-gradient(ellipse_at_top,hsla(24,60%,12%,1),hsla(24,10%,4%,1))]"></div>
+    <div class="fixed inset-0 opacity-[0.03] -z-10" style="background-image: radial-gradient(circle, hsla(0,0%,50%,0.5) 1px, transparent 1px); background-size: 24px 24px;"></div>
 
     <!-- Header -->
     <header class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
       <div class="flex items-center gap-3">
-        <div class="w-3 h-3 rounded-full bg-claude-orange animate-pulse-status"></div>
+        <div id="status-dot" class="w-3 h-3 rounded-full bg-claude-orange animate-pulse-status transition-colors duration-700"></div>
         <span class="font-mono text-sm text-claude-muted">isclaudedownagain.com</span>
       </div>
       <a
@@ -38,73 +38,118 @@
       </a>
     </header>
 
-    <!-- Hero -->
     <main class="max-w-5xl mx-auto px-6 pt-16 pb-24">
-      <section class="text-center mb-20">
-        <p class="font-mono text-sm uppercase tracking-widest text-claude-muted mb-6">Is Claude down again?</p>
-        <h1 class="text-[8rem] md:text-[12rem] font-display font-bold leading-none animate-shake bg-gradient-to-br from-claude-orange to-claude-amber bg-clip-text text-transparent select-none">
-          YES.
-        </h1>
-        <p class="text-2xl text-gray-300 mt-6 font-display">Naturally.</p>
-        <p class="text-lg text-claude-muted mt-4 max-w-xl mx-auto">
-          You came here because <code class="font-mono text-claude-amber bg-white/5 px-2 py-0.5 rounded">claude</code> stopped responding mid-thought. Again. We feel your pain.
-        </p>
-        <div class="text-8xl mt-10 animate-wobble inline-block" style="filter: drop-shadow(0 0 20px hsla(24, 90%, 55%, 0.4));">
-          🤖
-        </div>
-        <p class="mt-6 text-lg font-display bg-gradient-to-r from-claude-orange to-claude-amber bg-clip-text text-transparent">
-          "Your conversation could not be completed at this time."
-        </p>
-      </section>
+      <!-- ==================== DOWN STATE ==================== -->
+      <div id="down-state">
+        <section class="text-center mb-20">
+          <p class="font-mono text-sm uppercase tracking-widest text-claude-muted mb-6">Is Claude down again?</p>
+          <h1 class="text-[8rem] md:text-[12rem] font-display font-bold leading-none animate-shake bg-gradient-to-br from-claude-orange to-claude-amber bg-clip-text text-transparent select-none">
+            YES.
+          </h1>
+          <p class="text-2xl text-gray-300 mt-6 font-display">Naturally.</p>
+          <p class="text-lg text-claude-muted mt-4 max-w-xl mx-auto">
+            You came here because <code class="font-mono text-claude-amber bg-white/5 px-2 py-0.5 rounded">claude</code> stopped responding mid-thought. Again. We feel your pain.
+          </p>
+          <div class="text-8xl mt-10 animate-wobble inline-block" style="filter: drop-shadow(0 0 20px hsla(24, 90%, 55%, 0.4));">
+            🤖
+          </div>
+          <p class="mt-6 text-lg font-display bg-gradient-to-r from-claude-orange to-claude-amber bg-clip-text text-transparent">
+            "Your conversation could not be completed at this time."
+          </p>
+        </section>
 
-      <!-- Stats -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
-        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-orange/30 transition-colors">
-          <p class="text-sm font-mono text-claude-muted mb-2">current outage</p>
-          <p class="text-4xl font-mono font-bold text-claude-orange" id="downtime-counter">--:--:--</p>
-          <p class="text-sm text-claude-muted mt-2" id="downtime-label">checking...</p>
-        </div>
-        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-amber/30 transition-colors">
-          <p class="text-sm font-mono text-claude-muted mb-2">incidents this month</p>
-          <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count">--</p>
-          <p class="text-sm text-claude-muted mt-2">from the status page</p>
-        </div>
-        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-white/20 transition-colors">
-          <p class="text-sm font-mono text-claude-muted mb-2">developers waiting</p>
-          <p class="text-4xl font-mono font-bold text-white">&infin;</p>
-          <p class="text-sm text-claude-muted mt-2">including you, right now</p>
-        </div>
-      </section>
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-orange/30 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">current outage</p>
+            <p class="text-4xl font-mono font-bold text-claude-orange" id="downtime-counter">--:--:--</p>
+            <p class="text-sm text-claude-muted mt-2" id="downtime-label">checking...</p>
+          </div>
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-amber/30 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">incidents this month</p>
+            <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count-down">--</p>
+            <p class="text-sm text-claude-muted mt-2">from the status page</p>
+          </div>
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-white/20 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">developers waiting</p>
+            <p class="text-4xl font-mono font-bold text-white">&infin;</p>
+            <p class="text-sm text-claude-muted mt-2">including you, right now</p>
+          </div>
+        </section>
 
-      <!-- Excuse + Suggestion -->
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-        <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(24,90%,55%,0.1)] transition-shadow">
-          <p class="text-sm font-mono text-claude-muted mb-4">&#9888; today's probable excuse</p>
-          <p class="text-xl font-display text-gray-200 leading-relaxed" id="excuse"></p>
-          <p class="text-sm text-claude-muted mt-4 italic">&mdash; the status page, eventually</p>
-        </div>
-        <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(36,100%,55%,0.1)] transition-shadow">
-          <p class="text-sm font-mono text-claude-muted mb-4">&#128161; what to do in the meantime</p>
-          <p class="text-xl font-display text-gray-200 leading-relaxed" id="suggestion"></p>
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+          <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(24,90%,55%,0.1)] transition-shadow">
+            <p class="text-sm font-mono text-claude-muted mb-4">&#9888; today's probable excuse</p>
+            <p class="text-xl font-display text-gray-200 leading-relaxed" id="excuse"></p>
+            <p class="text-sm text-claude-muted mt-4 italic">&mdash; the status page, eventually</p>
+          </div>
+          <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(36,100%,55%,0.1)] transition-shadow">
+            <p class="text-sm font-mono text-claude-muted mb-4">&#128161; what to do in the meantime</p>
+            <p class="text-xl font-display text-gray-200 leading-relaxed" id="suggestion"></p>
+            <button
+              id="shuffle-btn"
+              class="mt-6 font-mono text-sm text-claude-amber underline underline-offset-4 hover:text-white transition-colors cursor-pointer"
+            >
+              give me another one &rarr;
+            </button>
+          </div>
+        </section>
+
+        <section class="text-center">
           <button
-            id="shuffle-btn"
-            class="mt-6 font-mono text-sm text-claude-amber underline underline-offset-4 hover:text-white transition-colors cursor-pointer"
+            id="refresh-btn-down"
+            class="inline-block px-8 py-4 rounded-xl font-mono font-bold text-lg bg-gradient-to-r from-claude-orange to-claude-amber text-claude-dark hover:scale-105 transition-transform cursor-pointer"
           >
-            give me another one &rarr;
+            REFRESH (it's still down)
           </button>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <!-- CTA -->
-      <section class="text-center">
-        <button
-          id="refresh-btn"
-          class="inline-block px-8 py-4 rounded-xl font-mono font-bold text-lg bg-gradient-to-r from-claude-orange to-claude-amber text-claude-dark hover:scale-105 transition-transform cursor-pointer"
-        >
-          REFRESH (it's still down)
-        </button>
+      <!-- ==================== UP STATE ==================== -->
+      <div id="up-state" class="hidden">
+        <section class="text-center mb-20">
+          <p class="font-mono text-sm uppercase tracking-widest text-claude-muted mb-6">Is Claude down again?</p>
+          <h1 class="text-[8rem] md:text-[12rem] font-display font-bold leading-none bg-gradient-to-br from-emerald-400 to-green-300 bg-clip-text text-transparent select-none">
+            NO.
+          </h1>
+          <p class="text-2xl text-gray-300 mt-6 font-display">Somehow.</p>
+          <p class="text-lg text-claude-muted mt-4 max-w-xl mx-auto">
+            Against all odds, Claude appears to be working right now. Enjoy it while it lasts.
+          </p>
+          <div class="text-8xl mt-10 inline-block" style="filter: drop-shadow(0 0 20px hsla(145, 70%, 45%, 0.4));">
+            ✨
+          </div>
+          <p class="mt-6 text-lg font-display bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
+            This won't last. Bookmark this page.
+          </p>
+        </section>
 
-      </section>
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-emerald-500/30 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">time since last incident</p>
+            <p class="text-4xl font-mono font-bold text-emerald-400" id="uptime-counter">--:--:--</p>
+            <p class="text-sm text-claude-muted mt-2" id="uptime-label">checking...</p>
+          </div>
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-amber/30 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">incidents this month</p>
+            <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count-up">--</p>
+            <p class="text-sm text-claude-muted mt-2">from the status page</p>
+          </div>
+          <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-white/20 transition-colors">
+            <p class="text-sm font-mono text-claude-muted mb-2">current status</p>
+            <p class="text-4xl font-mono font-bold text-emerald-400">OK</p>
+            <p class="text-sm text-claude-muted mt-2">don't get used to it</p>
+          </div>
+        </section>
+
+        <section class="text-center">
+          <button
+            id="refresh-btn-up"
+            class="inline-block px-8 py-4 rounded-xl font-mono font-bold text-lg bg-gradient-to-r from-emerald-500 to-green-400 text-claude-dark hover:scale-105 transition-transform cursor-pointer"
+          >
+            CHECK AGAIN (just to be safe)
+          </button>
+        </section>
+      </div>
     </main>
 
     <!-- Footer -->
@@ -150,8 +195,6 @@
       shuffle();
 
       const API = "https://status.claude.com/api/v2";
-      let outageStart: number | null = null;
-      let counterId: ReturnType<typeof setInterval> | null = null;
 
       function formatElapsed(ms: number) {
         const s = Math.floor(ms / 1000);
@@ -161,18 +204,47 @@
         return `${h}:${m}:${sec}`;
       }
 
-      function startCounter(since: number) {
-        outageStart = since;
+      function showDownState(incidentStart: number, monthCount: number) {
+        document.getElementById("down-state")!.classList.remove("hidden");
+        document.getElementById("up-state")!.classList.add("hidden");
+        document.getElementById("bg-gradient")!.className =
+          "fixed inset-0 -z-10 transition-all duration-700 bg-[radial-gradient(ellipse_at_top,hsla(24,60%,12%,1),hsla(24,10%,4%,1))]";
+        document.getElementById("status-dot")!.className =
+          "w-3 h-3 rounded-full bg-claude-orange animate-pulse-status transition-colors duration-700";
+        document.getElementById("theme-color")!.setAttribute("content", "#e8622c");
+
+        document.getElementById("downtime-label")!.textContent = "and counting";
+        document.getElementById("outage-count-down")!.textContent = String(monthCount);
+
         function tick() {
-          document.getElementById("downtime-counter")!.textContent = formatElapsed(Date.now() - outageStart!);
+          document.getElementById("downtime-counter")!.textContent = formatElapsed(Date.now() - incidentStart);
         }
         tick();
-        counterId = setInterval(tick, 1000);
+        setInterval(tick, 1000);
       }
 
-      function showNoOutage() {
-        document.getElementById("downtime-counter")!.textContent = "00:00:00";
-        document.getElementById("downtime-label")!.textContent = "all clear (for now)";
+      function showUpState(lastResolved: number | null, monthCount: number) {
+        document.getElementById("down-state")!.classList.add("hidden");
+        document.getElementById("up-state")!.classList.remove("hidden");
+        document.getElementById("bg-gradient")!.className =
+          "fixed inset-0 -z-10 transition-all duration-700 bg-[radial-gradient(ellipse_at_top,hsla(145,40%,10%,1),hsla(145,10%,4%,1))]";
+        document.getElementById("status-dot")!.className =
+          "w-3 h-3 rounded-full bg-emerald-400 animate-pulse-status transition-colors duration-700";
+        document.getElementById("theme-color")!.setAttribute("content", "#34d399");
+
+        document.getElementById("outage-count-up")!.textContent = String(monthCount);
+
+        if (lastResolved) {
+          document.getElementById("uptime-label")!.textContent = "and counting";
+          function tick() {
+            document.getElementById("uptime-counter")!.textContent = formatElapsed(Date.now() - lastResolved);
+          }
+          tick();
+          setInterval(tick, 1000);
+        } else {
+          document.getElementById("uptime-counter")!.textContent = "∞";
+          document.getElementById("uptime-label")!.textContent = "no incidents found";
+        }
       }
 
       async function fetchStatus() {
@@ -185,34 +257,36 @@
           const unresolved = await unresolvedRes.json();
           const allIncidents = await incidentsRes.json();
 
-          if (unresolved.incidents?.length > 0) {
-            const earliest = unresolved.incidents
-              .map((i: any) => new Date(i.started_at || i.created_at).getTime())
-              .sort((a: number, b: number) => a - b)[0];
-            startCounter(earliest);
-            document.getElementById("downtime-label")!.textContent = "and counting";
-          } else {
-            showNoOutage();
-          }
-
           const now = new Date();
           const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
           const thisMonth = (allIncidents.incidents || []).filter(
             (i: any) => new Date(i.created_at) >= monthStart
           );
-          document.getElementById("outage-count")!.textContent = String(thisMonth.length);
+          const monthCount = thisMonth.length;
+
+          if (unresolved.incidents?.length > 0) {
+            const earliest = unresolved.incidents
+              .map((i: any) => new Date(i.started_at || i.created_at).getTime())
+              .sort((a: number, b: number) => a - b)[0];
+            showDownState(earliest, monthCount);
+          } else {
+            const resolved = (allIncidents.incidents || [])
+              .filter((i: any) => i.resolved_at)
+              .map((i: any) => new Date(i.resolved_at).getTime())
+              .sort((a: number, b: number) => b - a);
+            showUpState(resolved.length > 0 ? resolved[0] : null, monthCount);
+          }
         } catch {
           document.getElementById("downtime-counter")!.textContent = "??:??:??";
           document.getElementById("downtime-label")!.textContent = "couldn't reach status page";
-          document.getElementById("outage-count")!.textContent = "?";
         }
       }
 
       fetchStatus();
 
-      // Buttons
       document.getElementById("shuffle-btn")!.addEventListener("click", shuffle);
-      document.getElementById("refresh-btn")!.addEventListener("click", () => window.location.reload());
+      document.getElementById("refresh-btn-down")!.addEventListener("click", () => window.location.reload());
+      document.getElementById("refresh-btn-up")!.addEventListener("click", () => window.location.reload());
     </script>
   </body>
 </html>
