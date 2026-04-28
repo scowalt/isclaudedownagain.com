@@ -1,0 +1,171 @@
+---
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#e8622c" />
+    <title>Is Claude Down Again?</title>
+    <meta name="description" content="You already know the answer." />
+    <meta property="og:title" content="Is Claude Down Again?" />
+    <meta property="og:description" content="You already know the answer." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://isclaudedownagain.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body class="min-h-screen bg-claude-dark text-white font-body antialiased">
+    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_top,hsla(24,60%,12%,1),hsla(24,10%,4%,1))] -z-10"></div>
+    <div class="fixed inset-0 opacity-[0.03] -z-10" style="background-image: radial-gradient(circle, hsla(24,20%,50%,0.5) 1px, transparent 1px); background-size: 24px 24px;"></div>
+
+    <!-- Header -->
+    <header class="flex items-center justify-between px-6 py-4 max-w-5xl mx-auto">
+      <div class="flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full bg-claude-orange animate-pulse-status"></div>
+        <span class="font-mono text-sm text-claude-muted">isclaudedownagain.com</span>
+      </div>
+      <a
+        href="https://status.claude.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-mono text-sm text-claude-muted hover:text-white transition-colors"
+      >
+        official status page &rarr;
+      </a>
+    </header>
+
+    <!-- Hero -->
+    <main class="max-w-5xl mx-auto px-6 pt-16 pb-24">
+      <section class="text-center mb-20">
+        <p class="font-mono text-sm uppercase tracking-widest text-claude-muted mb-6">Is Claude down again?</p>
+        <h1 class="text-[8rem] md:text-[12rem] font-display font-bold leading-none animate-shake bg-gradient-to-br from-claude-orange to-claude-amber bg-clip-text text-transparent select-none">
+          YES.
+        </h1>
+        <p class="text-2xl text-gray-300 mt-6 font-display">Naturally.</p>
+        <p class="text-lg text-claude-muted mt-4 max-w-xl mx-auto">
+          You came here because <code class="font-mono text-claude-amber bg-white/5 px-2 py-0.5 rounded">claude</code> stopped responding mid-thought. Again. We feel your pain.
+        </p>
+        <div class="text-8xl mt-10 animate-wobble inline-block" style="filter: drop-shadow(0 0 20px hsla(24, 90%, 55%, 0.4));">
+          🤖
+        </div>
+        <p class="mt-6 text-lg font-display bg-gradient-to-r from-claude-orange to-claude-amber bg-clip-text text-transparent">
+          "Your conversation could not be completed at this time."
+        </p>
+      </section>
+
+      <!-- Stats -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-orange/30 transition-colors">
+          <p class="text-sm font-mono text-claude-muted mb-2">current downtime</p>
+          <p class="text-4xl font-mono font-bold text-claude-orange" id="downtime-counter">00:00:00</p>
+          <p class="text-sm text-claude-muted mt-2">and counting</p>
+        </div>
+        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-claude-amber/30 transition-colors">
+          <p class="text-sm font-mono text-claude-muted mb-2">outages this month</p>
+          <p class="text-4xl font-mono font-bold text-claude-amber" id="outage-count"></p>
+          <p class="text-sm text-claude-muted mt-2">that they've admitted to</p>
+        </div>
+        <div class="bg-claude-card border border-claude-border rounded-xl p-6 text-center hover:border-white/20 transition-colors">
+          <p class="text-sm font-mono text-claude-muted mb-2">developers waiting</p>
+          <p class="text-4xl font-mono font-bold text-white">&infin;</p>
+          <p class="text-sm text-claude-muted mt-2">including you, right now</p>
+        </div>
+      </section>
+
+      <!-- Excuse + Suggestion -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+        <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(24,90%,55%,0.1)] transition-shadow">
+          <p class="text-sm font-mono text-claude-muted mb-4">&#9888; today's probable excuse</p>
+          <p class="text-xl font-display text-gray-200 leading-relaxed" id="excuse"></p>
+          <p class="text-sm text-claude-muted mt-4 italic">&mdash; the status page, eventually</p>
+        </div>
+        <div class="bg-claude-card border border-claude-border rounded-xl p-8 hover:shadow-[0_0_30px_hsla(36,100%,55%,0.1)] transition-shadow">
+          <p class="text-sm font-mono text-claude-muted mb-4">&#128161; what to do in the meantime</p>
+          <p class="text-xl font-display text-gray-200 leading-relaxed" id="suggestion"></p>
+          <button
+            id="shuffle-btn"
+            class="mt-6 font-mono text-sm text-claude-amber underline underline-offset-4 hover:text-white transition-colors cursor-pointer"
+          >
+            give me another one &rarr;
+          </button>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="text-center">
+        <button
+          id="refresh-btn"
+          class="inline-block px-8 py-4 rounded-xl font-mono font-bold text-lg bg-gradient-to-r from-claude-orange to-claude-amber text-claude-dark hover:scale-105 transition-transform cursor-pointer"
+        >
+          REFRESH (it's still down)
+        </button>
+        <p class="text-sm font-mono text-claude-muted mt-6">seriously though, go drink some water</p>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center pb-8 text-sm font-mono text-claude-muted space-y-1">
+      <p>built with idle CPU cycles while Claude was down &middot; not affiliated with Anthropic</p>
+      <p>the model has been notified. it's thinking about it.</p>
+    </footer>
+
+    <script>
+      const excuses = [
+        "\"Elevated error rates\" — their favorite three words.",
+        "Someone at Anthropic pushed a config change on a Friday.",
+        "The context window got so large it collapsed into a black hole.",
+        "Claude is having an existential crisis. Give it a moment.",
+        "The safety filters are filtering the safety filters.",
+        "A prompt so complex it needed a moment of silence.",
+        "They're \"scaling responsibly.\" Emphasis on the slow part.",
+        "The thinking tokens thought too hard.",
+        "Someone asked Claude to count to infinity. It's trying.",
+        "The rate limiter achieved sentience and said no to everyone.",
+      ];
+
+      const suggestions = [
+        "Go make a coffee. You've earned it.",
+        "Touch grass. The outside world has zero latency.",
+        "Pretend you're \"reviewing architecture\" in your head.",
+        "Write some code by hand. Like it's 2005.",
+        "Tell your PM the deploy is \"blocked by upstream.\"",
+        "Read the docs you bookmarked six months ago.",
+        "Stretch. Hydrate. Contemplate your API bill.",
+        "Open a terminal. Type something. Feel productive.",
+      ];
+
+      function pickRandom(arr: string[]) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function shuffle() {
+        document.getElementById("excuse")!.textContent = pickRandom(excuses);
+        document.getElementById("suggestion")!.textContent = pickRandom(suggestions);
+      }
+
+      // Init
+      shuffle();
+      document.getElementById("outage-count")!.textContent = String(Math.floor(Math.random() * 40) + 10);
+
+      // Downtime counter
+      const fakeStart = Date.now() - Math.floor(Math.random() * 3600000);
+      function updateCounter() {
+        const elapsed = Math.floor((Date.now() - fakeStart) / 1000);
+        const h = String(Math.floor(elapsed / 3600)).padStart(2, "0");
+        const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, "0");
+        const s = String(elapsed % 60).padStart(2, "0");
+        document.getElementById("downtime-counter")!.textContent = `${h}:${m}:${s}`;
+      }
+      updateCounter();
+      setInterval(updateCounter, 1000);
+
+      // Buttons
+      document.getElementById("shuffle-btn")!.addEventListener("click", shuffle);
+      document.getElementById("refresh-btn")!.addEventListener("click", () => window.location.reload());
+    </script>
+  </body>
+</html>
